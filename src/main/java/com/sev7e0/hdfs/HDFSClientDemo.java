@@ -6,6 +6,7 @@ import java.net.URI;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hdfs.tools.HDFSConcat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,13 +18,27 @@ public class HDFSClientDemo {
 	public void init() throws Exception {
 		Configuration configuration = new Configuration();
 //		configuration.set("fs.defaultFS","hdfs://spark01:9000" );
+		//设置上传目标文件的副本数，
+//		configuration.set("dfs.replication","5");
 //		configuration.set("fs.file.impl","org.apache.hadoop.fs.LocalFileSystem" );
 //		configuration.set("fs.hdfs.impl","org.apache.hadoop.hdfs.DistributedFileSystem" );
+		//******注意：以上配置都是由由就近原则进行配置调用******
+		//con.set > 自定义配置文件 > jar中配置文件 >  服务端配置
 		
 		//可以在获取fileSystem对象时，可以配置uri 和用户名
 		fileSystem = FileSystem.get(new URI("hdfs://spark01:9000"),configuration,"hadoopadmin");
+		
 	}
 
+	/**
+	 * 
+	* @Title: downloadCommod  
+	* @Description: 从hdfs中拷贝文件到其他文件系统
+	* @param @throws IllegalArgumentException
+	* @param @throws IOException   
+	* @return void      
+	* @throws
+	 */
 	@Test
 	public void downloadCommod() throws IllegalArgumentException, IOException {
 		//在文件拷贝与上传的过程中路径要精确到文件名
@@ -31,6 +46,15 @@ public class HDFSClientDemo {
 		fileSystem.close();
 	}
 	
+	/**
+	 * 
+	* @Title: uploadCommond  
+	* @Description: 从其他文件系统上传文件到hdfs中
+	* @param @throws Exception
+	* @param @throws IOException   
+	* @return void      
+	* @throws
+	 */
 	@Test
 	public void uploadCommond() throws Exception, IOException {
 		fileSystem.copyFromLocalFile(new Path("/home/sev7e0/bigdata/hbase-2.0.1-src.tar.gz"),
@@ -38,5 +62,4 @@ public class HDFSClientDemo {
 				new Path("/eclipse/upload02/hbase-2.0.1-src.tar.gz"));
 		fileSystem.close();
 	}
-
 }
