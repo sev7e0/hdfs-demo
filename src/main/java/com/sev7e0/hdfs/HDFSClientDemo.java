@@ -1,11 +1,16 @@
 package com.sev7e0.hdfs;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.hdfs.tools.HDFSConcat;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +19,10 @@ public class HDFSClientDemo {
 
 	FileSystem fileSystem = null;
 
+	Configuration configuration = null;
 	@Before
 	public void init() throws Exception {
-		Configuration configuration = new Configuration();
+	    configuration = new Configuration();
 //		configuration.set("fs.defaultFS","hdfs://spark01:9000" );
 		//设置上传目标文件的副本数，
 //		configuration.set("dfs.replication","5");
@@ -62,4 +68,81 @@ public class HDFSClientDemo {
 				new Path("/eclipse/upload02/hbase-2.0.1-src.tar.gz"));
 		fileSystem.close();
 	}
+	/**
+	 * 
+	* @Title: getConfigeration  
+	* @Description: 获取服务器相关配置信息
+	* @param    
+	* @return void      
+	* @throws
+	 */
+	@Test
+	public void getConfigeration() {
+		Iterator<Entry<String, String>> iterator = configuration.iterator();
+		while(iterator.hasNext()) {
+			System.out.println("name:"+iterator.next().getKey()+"  value:"+iterator.next().getValue());
+		}
+	}
+
+	/**
+	 * 
+	* @Title: mkdirOnHDFS  
+	* @Description: 通过java客户端创建hdfs文件目录
+	* @param @throws IllegalArgumentException
+	* @param @throws IOException   
+	* @return void      
+	* @throws
+	 */
+	@Test
+	public void mkdirOnHDFS() throws IllegalArgumentException, IOException {
+		Boolean mkdirRes =  fileSystem.mkdirs(new Path("/eclipse/0819testdir/"));
+		System.out.println(mkdirRes);
+	}
+	/**
+	 * 
+	* @Title: deleteFromHDFS  
+	* @Description: 删除目录及文件
+	* @param @throws IllegalArgumentException
+	* @param @throws IOException   
+	* @return void      
+	* @throws
+	 */
+	@Test
+	public void deleteFromHDFS() throws IllegalArgumentException, IOException {
+//		Boolean boolean1 =  fileSystem.delete(new Path("/eclipse/0819testdir/"));
+		Boolean boolean1 =  fileSystem.delete(new Path("/eclipse/0819testdir/"),true);
+		System.out.println(boolean1);
+	}
+	/**
+	 * 
+	* @Title: listFileFromHDFS  
+	* @Description:  获取文件目录
+	* @param @throws FileNotFoundException
+	* @param @throws IllegalArgumentException
+	* @param @throws IOException   
+	* @return void      
+	* @throws
+	 */
+	@Test
+	public void listFileFromHDFS() throws FileNotFoundException, IllegalArgumentException, IOException {
+		RemoteIterator<LocatedFileStatus> list = fileSystem.listFiles(new Path("/eclipse"),true);
+		
+		while(list.hasNext()) {
+			System.out.println(list.next().getBlockSize());
+			System.out.println(list.next().getGroup());
+			System.out.println(list.next().isDirectory());
+//			System.out.println(list.next().isFile());
+			System.out.println(list.next().getPermission());
+			System.out.println("---------");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
