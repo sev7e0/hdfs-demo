@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
@@ -137,6 +138,24 @@ public class HDFSClientDemo {
 		}
 	}
 	
+	
+	/**
+	 * 
+	* @Title: listFileStatus  
+	* @Description: 获取文件状态
+	* @param @throws FileNotFoundException
+	* @param @throws IllegalArgumentException
+	* @param @throws IOException   
+	* @return void      
+	* @throws
+	 */
+	@Test
+	public void listFileStatus() throws FileNotFoundException, IllegalArgumentException, IOException {
+		FileStatus[] fileStatus =  fileSystem.listStatus(new Path("/eclipse"));
+		for (int i = 0; i < fileStatus.length; i++) {
+			System.out.println(fileStatus[i].isDirectory());
+		}
+	}
 	
 	
 	
